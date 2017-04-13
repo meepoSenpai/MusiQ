@@ -9,12 +9,28 @@
     <tr>
       <th>Song</th>
       <th>Points</th>
+      <th></th>
+      <th></th>
     </tr>
 
     {% for s in SONGS %}
         <tr>
-          <td><a href="{{ SERVERNAME }}/{{ s[0] }}">{{ s[1] }}</a></td>
+          <td>{{ s[1] }}</td>
           <td>{{ s[2] }}</td>
+          <td>
+            <form action="{{ SERVERNAME }}" method="post">
+              <input type=hidden name="song_id" value="{{ s[0] }}"/>
+              <input type=hidden name="weight" value="1"/>
+              <button type=submit>👍</button>
+            </form>
+          </td>
+          <td>
+            <form action="{{ SERVERNAME }}" method="post">
+              <input type=hidden name="song_id" value="{{ s[0] }}"/>
+              <input type=hidden name="weight" value="-1"/>
+              <button type=submit>👎</button>
+            </form>
+          </td>
         </tr>
     {% endfor %}
   </table>

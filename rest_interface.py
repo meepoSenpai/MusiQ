@@ -1,13 +1,13 @@
 from flask import *
 
 app = Flask(__name__)
-SERVERNAME = "localhost:5000"
+SERVERNAME = "http://localhost:5000"
 
 # url_for('static', filename='style.css')
 
 def vote_song(song_id, weight):
     print(song_id, weight)
-    return str(0)
+    return str(weight)
 
 def search_song(term):
     return term
