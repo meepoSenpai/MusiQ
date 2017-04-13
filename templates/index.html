@@ -1,1 +1,24 @@
-Song Playlist here
+<!doctype html>
+<html>
+<head>
+<title>Hello from Flask</title>
+</head>
+<body>
+{% if SONGS %}
+  <table>
+    <tr>
+      <th>Song</th>
+      <th>Points</th>
+    </tr>
+
+    {% for s in SONGS %}
+        <tr>
+          <td><a href="{{ SERVERNAME }}/{{ s[0] }}">{{ s[1] }}</a></td>
+          <td>{{ s[2] }}</td>
+        </tr>
+    {% endfor %}
+  </table>
+
+{% endif %}
+</body>
+</html>

@@ -1,6 +1,7 @@
 from flask import *
 
 app = Flask(__name__)
+SERVERNAME = "localhost:5000"
 
 # url_for('static', filename='style.css')
 
@@ -11,6 +12,9 @@ def vote_song(song_id, weight):
 def search_song(term):
     return term
 
+def get_song_list():
+    return [("song1_id", "Song 1", "5"), ("song2_id", "Song 2", "3")]
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
     error = None
@@ -18,7 +22,10 @@ def index():
         return vote_song(request.form['song_id'], request.form['weight'])
     # the code below is executed if the request method
     # was GET or the credentials were invalid
-    return render_template('index.html', error=error)
+    return render_template('index.html', 
+        ERROR=error, 
+        SONGS=get_song_list(),
+        SERVERNAME=SERVERNAME)
 
 @app.route('/search')
 def search():
