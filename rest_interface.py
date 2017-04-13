@@ -1,7 +1,10 @@
 from flask import *
+from party_generator import Client
 
 app = Flask(__name__)
 SERVERNAME = "http://localhost:5000"
+
+CLIENT = Client()
 
 # url_for('static', filename='style.css')
 
@@ -13,7 +16,8 @@ def search_song(term):
     return term
 
 def get_song_list():
-    return [("song1_id", "Song 1", "5"), ("song2_id", "Song 2", "3")]
+    # Magic begins here
+    return [(elem[0].get("title"), elem[0].get("artist")) for elem in CLIENT.queue]
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
