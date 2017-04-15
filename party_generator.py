@@ -1,10 +1,5 @@
-import json
-from mpd import MPDClient
+from mpd import MPDClient, ConnectionError
 from time import time
-
-MPC = MPDClient()
-MPC.timeout = 10
-MPC.connect('localhost', 6600)
 
 class Client:
     '''
@@ -21,11 +16,17 @@ class Client:
         self.__init_query()
 
     def __init_query(self):
-        init = self.client.listplaylistinfo('Awesome Music')[:5]
-        for elem in init:
-            song = self.client.find('title', elem['title'])[0]
-            self.add_song(song, 'SOMEDUDE')
-        print('\n\n\n\n')
+        try:
+            init = self.client.listplaylistinfo('Awesome Music')[:5]
+            for elem in init:
+                song = self.client.find('title', elem['title'])[0]
+                self.add_song(song, 'SOMEDUDE')
+        except ConnectionError:
+            self.client.connect('localhost', port=6600)
+            self.client.clear()
+            init = self.client.listplaylistinfo('Awesome Music')[:5]
+            for elem in init:
+                song = self.client.find('title', elem['title'])[0]
 
 
 
@@ -39,11 +40,16 @@ class Client:
         for key in query:
             mpd_compliant_query.append(key)
             mpd_compliant_query.append(query.get(key))
-        print(mpd_compliant_query)
-        return self.client.find(*mpd_compliant_query)
+        try:
+            query_result = self.client.find(*mpd_compliant_query)
+        except ConnectionError:
+            self.client.connect('localhost', port=6600)
+            query_result = self.client.find(*mpd_compliant_query)
+        return query_result
+
 
     def __sort_rankings(self):
-        self.queue.sort(key=__song_key)
+        self.queue.sort(key=song_key)
 
     def add_song(self, song, ip_addr):
         '''
@@ -79,9 +85,13 @@ class Client:
     def __mpd_add(self):
         self.__sort_rankings()
         song = self.queue.pop()[0]
-        MPC.add(song['file'])
+        try:
+            self.client.add(song['file'])
+        except ConnectionError:
+            self.client.connect('localhost', port=6600)
+            self.client.add(song['file'])
 
-def __song_key(song):
+def song_key(song):
     song_set = song[2]
     karma = 0
     for elem in song_set:
