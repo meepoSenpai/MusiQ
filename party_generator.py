@@ -1,3 +1,4 @@
+import json
 from mpd import MPDClient
 from time import time
 
@@ -18,7 +19,8 @@ class Client:
         init = self.client.listplaylistinfo('Awesome Music')[:5]
         for elem in init:
             song = self.client.find('title', elem['title'])[0]
-            self.add_song(song, 'localhost')
+            self.add_song(song, 'SOMEDUDE')
+        print('\n\n\n\n')
 
 
 
@@ -44,10 +46,12 @@ class Client:
     def vote_song(self, song, ip, vote):
         to_vote = None
         for elem in self.queue:
-            if song == elem[0]:
+            if song == elem[0].get('file'):
                 to_vote = elem
                 break
-        if (ip, True) in to_vote[2] or (ip, False) in to_vote[2]:
+        if not to_vote:
+            return False
+        if (ip, 1) in to_vote[2] or (ip, -1) in to_vote[2]:
             return False
         to_vote[2].add((ip, vote))
         self.sort_rankings()
@@ -62,8 +66,5 @@ def song_key(song):
     song_set = song[2]
     karma = 0
     for elem in song_set:
-        if elem[1]:
-            karma = karma + 1
-        else:
-            karma = karma - 1
+        karma = karma + elem[1]
     return (karma, -1 * song[1])

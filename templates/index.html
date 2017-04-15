@@ -15,18 +15,17 @@
 
     {% for s in SONGS %}
         <tr>
-          <td>{{ s[1] }}</td>
-          <td>{{ s[2] }}</td>
+          <td>{{ "{}, {}".format(s[0].get('title'), s[0].get('artist')) }}</td>
           <td>
             <form action="{{ SERVERNAME }}" method="post">
-              <input type=hidden name="song_id" value="{{ s[0] }}"/>
+              <input type=hidden name="song_id" value="{{ s[0].get('file') }}"/>
               <input type=hidden name="weight" value="1"/>
               <button type=submit>👍</button>
             </form>
           </td>
           <td>
             <form action="{{ SERVERNAME }}" method="post">
-              <input type=hidden name="song_id" value="{{ s[0] }}"/>
+              <input type=hidden name="song_id" value="{{ s[0].get('file') }}"/>
               <input type=hidden name="weight" value="-1"/>
               <button type=submit>👎</button>
             </form>
