@@ -7,6 +7,10 @@ MPC.timeout = 10
 MPC.connect('localhost', 6600)
 
 class Client:
+    '''
+    MPDClient wrapper class to create a Client that is sensible for
+    a collaborative playlist generation. Basically a PartyGenerator
+    '''
 
     def __init__(self, host='localhost', port=6600):
         self.client = MPDClient()
@@ -14,8 +18,9 @@ class Client:
         self.client.connect(host, port)
         self.queue = []
         self.recent = []
+        self.__init_query()
 
-    def init_query(self):
+    def __init_query(self):
         init = self.client.listplaylistinfo('Awesome Music')[:5]
         for elem in init:
             song = self.client.find('title', elem['title'])[0]
@@ -25,6 +30,11 @@ class Client:
 
 
     def query_song(self, **query):
+        '''
+        This method takes a dictionary for a MPD-Search query.
+        Valid keys are:
+            any, artist, title, album
+        '''
         mpd_compliant_query = []
         for key in query:
             mpd_compliant_query.append(key)
@@ -32,18 +42,27 @@ class Client:
         print(mpd_compliant_query)
         return self.client.find(*mpd_compliant_query)
 
-    def sort_rankings(self):
-        self.queue.sort(key=song_key)
+    def __sort_rankings(self):
+        self.queue.sort(key=__song_key)
 
-    def add_song(self, song, ip):
+    def add_song(self, song, ip_addr):
+        '''
+        This method takes a song-filehandle and an IP (or any other string)
+        as arguments. It will add the song (given the filehandle is valid)
+        to the queue if it was not in the queue before and then directly
+        upvote the song. Otherwise it will only upvote the song.'''
         song_list = [x[0] for x in self.queue]
         if song in song_list:
-            self.vote_song(song, ip, True)
+            self.vote_song(song, ip_addr, True)
         else:
             self.queue.append((song, time(), set()))
-            self.vote_song(song, ip, True)
+            self.vote_song(song, ip_addr, True)
 
-    def vote_song(self, song, ip, vote):
+    def vote_song(self, song, ip_addr, vote):
+        '''
+        Takes a song-filehandle(str), IP(str) and a vote(bool) as arguments.
+        Will vote for the song if the song is in the queue.
+        '''
         to_vote = None
         for elem in self.queue:
             if song == elem[0].get('file'):
@@ -51,18 +70,18 @@ class Client:
                 break
         if not to_vote:
             return False
-        if (ip, 1) in to_vote[2] or (ip, -1) in to_vote[2]:
+        if (ip_addr, 1) in to_vote[2] or (ip_addr, -1) in to_vote[2]:
             return False
-        to_vote[2].add((ip, vote))
-        self.sort_rankings()
+        to_vote[2].add((ip_addr, vote))
+        self.__sort_rankings()
         return True
 
-    def mpd_add(self):
-        self.sort_rankings()
+    def __mpd_add(self):
+        self.__sort_rankings()
         song = self.queue.pop()[0]
         MPC.add(song['file'])
 
-def song_key(song):
+def __song_key(song):
     song_set = song[2]
     karma = 0
     for elem in song_set:
