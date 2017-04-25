@@ -72,14 +72,16 @@ class Client:
         to the queue if it was not in the queue before and then directly
         upvote the song. Otherwise it will only upvote the song.'''
         user_list = [x for x in self.recent_users if ip_addr in x]
-        if user_list == []:
-            return False
+        if user_list != []:
+            return 'You already added a Song in the last 15 Minutes'
         song_list = [x[0] for x in self.queue]
         if song in song_list:
             self.vote_song(song, ip_addr, True)
+            return 'The song is already in the queue. It has been upvoted if you haven\'t voted for it yet'
         else:
             self.queue.append((song, time(), set()))
             self.vote_song(song, ip_addr, True)
+            return 'Successfully added the song into the queue'
 
     def vote_song(self, song, ip_addr, vote):
         '''
@@ -107,9 +109,11 @@ class Client:
         except ConnectionError:
             self.client.connect('localhost', port=6600)
             self.client.add(song['file'])
+        self.recent.append((song, time()))
 
     def __pop_recent(self):
         self.recent = [x for x in self.recent if time() - x[1] > 600]
+        self.recent_users = [x for x in self.recent_users if time() - x[1] > 900]
 
 def song_key(song):
     song_set = song[2]
