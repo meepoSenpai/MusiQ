@@ -13,20 +13,34 @@ class Client:
         self.client.connect(host, port)
         self.queue = []
         self.recent = []
+        self.recent_users = []
         self.__init_query()
+        if self.client.status()['state'] != 'play':
+            self.client.clear()
+            self.__mpd_add()
+            self.__mpd_add()
+            self.client.play(0)
 
     def __init_query(self):
         try:
             init = self.client.listplaylistinfo('Awesome Music')[:5]
             for elem in init:
-                song = self.client.find('title', elem['title'])[0]
-                self.add_song(song, 'SOMEDUDE')
+                try:
+                    song = self.client.find('title', elem['title'])[0]
+                    self.add_song(song, 'SOMEDUDE')
+                except IndexError:
+                    continue
         except ConnectionError:
             self.client.connect('localhost', port=6600)
             self.client.clear()
             init = self.client.listplaylistinfo('Awesome Music')[:5]
             for elem in init:
-                song = self.client.find('title', elem['title'])[0]
+                try:
+                    song = self.client.find('title', elem['title'])[0]
+                    self.add_song(song, 'SOMEDUDE')
+                except IndexError:
+                    continue
+        self.__sort_rankings()
 
 
 
@@ -57,6 +71,9 @@ class Client:
         as arguments. It will add the song (given the filehandle is valid)
         to the queue if it was not in the queue before and then directly
         upvote the song. Otherwise it will only upvote the song.'''
+        user_list = [x for x in self.recent_users if ip_addr in x]
+        if user_list == []:
+            return False
         song_list = [x[0] for x in self.queue]
         if song in song_list:
             self.vote_song(song, ip_addr, True)
@@ -91,9 +108,13 @@ class Client:
             self.client.connect('localhost', port=6600)
             self.client.add(song['file'])
 
+    def __pop_recent(self):
+        self.recent = [x for x in self.recent if time() - x[1] > 600]
+
 def song_key(song):
     song_set = song[2]
     karma = 0
     for elem in song_set:
         karma = karma + elem[1]
     return (karma, -1 * song[1])
+
