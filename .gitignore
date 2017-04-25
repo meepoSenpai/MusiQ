@@ -4,4 +4,4 @@ lib/
 pip-selfcheck.json
 __pycache__/
 .idea/
-.#rest_interface.py
+.#*

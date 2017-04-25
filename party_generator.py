@@ -71,6 +71,7 @@ class Client:
         as arguments. It will add the song (given the filehandle is valid)
         to the queue if it was not in the queue before and then directly
         upvote the song. Otherwise it will only upvote the song.'''
+        self.__pop_recent()
         user_list = [x for x in self.recent_users if ip_addr in x]
         if user_list != []:
             return 'You already added a Song in the last 15 Minutes'
@@ -81,6 +82,7 @@ class Client:
         else:
             self.queue.append((song, time(), set()))
             self.vote_song(song, ip_addr, True)
+            self.recent_users.append((ip_addr, time()))
             return 'Successfully added the song into the queue'
 
     def vote_song(self, song, ip_addr, vote):
