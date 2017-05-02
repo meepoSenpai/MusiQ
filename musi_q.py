@@ -7,37 +7,38 @@ class Client:
     a collaborative playlist generation. Basically a PartyGenerator
     '''
 
-    def __init__(self, host='localhost', port=6600):
+    def __init__(self, host='localhost', port=6600, default_playlist=None):
         self.client = MPDClient()
         self.client.timeout = 10
         self.client.connect(host, port)
         self.queue = []
         self.recent = []
         self.recent_users = []
-        self.__init_query()
-        if self.client.status()['state'] != 'play':
+        if default_playlist:
+            self.__init_query(default_playlist)
+        if self.client.status()['state'] != 'play' and self.queue != []:
             self.client.clear()
             self.__mpd_add()
             self.__mpd_add()
             self.client.play(0)
 
-    def __init_query(self):
+    def __init_query(self, playlist_name):
         try:
-            init = self.client.listplaylistinfo('Awesome Music')[:5]
+            init = self.client.listplaylistinfo(playlist_name)
             for elem in init:
                 try:
                     song = self.client.find('title', elem['title'])[0]
-                    self.add_song(song, 'SOMEDUDE')
+                    self.add_song(song, 'admin')
                 except IndexError:
                     continue
         except ConnectionError:
             self.client.connect('localhost', port=6600)
             self.client.clear()
-            init = self.client.listplaylistinfo('Awesome Music')[:5]
+            init = self.client.listplaylistinfo(playlist_name)[:5]
             for elem in init:
                 try:
                     song = self.client.find('title', elem['title'])[0]
-                    self.add_song(song, 'SOMEDUDE')
+                    self.add_song(song, 'admin')
                 except IndexError:
                     continue
         self.__sort_rankings()

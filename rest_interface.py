@@ -1,5 +1,5 @@
 from flask import request, Flask, render_template
-from party_generator import Client
+from musi_q import Client
 
 app = Flask(__name__)
 SERVERNAME = "http://localhost:5000"
