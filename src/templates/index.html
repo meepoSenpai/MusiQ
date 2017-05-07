@@ -1,13 +1,10 @@
-<!doctype html>
-<html>
-<head>
-<title>Hello from Flask</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block body %}
 {% if SONGS %}
   <table>
     <tr>
       <th>Song</th>
+      <th>Artist</th>
       <th>Points</th>
       <th></th>
       <th></th>
@@ -15,25 +12,37 @@
 
     {% for s in SONGS %}
         <tr>
-          <td>{{ "{}, {}".format(s[0].get('title'), s[0].get('artist')) }}</td>
+          <td>{{
+          "{}".
+            format(
+              s[0].get('title')[:30]
+            ) 
+          }}</td>
+          <td>{{
+          "{}".
+            format(
+              s[0].get('artist')[:30]
+            ) 
+          }}</td>
+          <td>{{
+          "{}".
+            format(
+              F_KARMA(s)
+            ) 
+          }}</td>
           <td>
-            <form action="{{ SERVERNAME }}" method="post">
-              <input type=hidden name="song_id" value="{{ s[0].get('file') }}"/>
-              <input type=hidden name="weight" value="1"/>
-              <button type=submit>👍</button>
-            </form>
+            <div>
+              <button onclick="button_vote(this, '{{ s[0].get('file') }}', 1)" class="upvote_button" type=submit>👍</button>
+            </div>
           </td>
           <td>
-            <form action="{{ SERVERNAME }}" method="post">
-              <input type=hidden name="song_id" value="{{ s[0].get('file') }}"/>
-              <input type=hidden name="weight" value="-1"/>
-              <button type=submit>👎</button>
-            </form>
+            <div>
+              <button onclick="button_vote(this, '{{ s[0].get('file') }}', -1)" class="downvote_button" type=submit>👎</button>
+            </div>
           </td>
         </tr>
     {% endfor %}
   </table>
 
 {% endif %}
-</body>
-</html>
+{% endblock %}
