@@ -1,2 +1,15 @@
 .upvote_button { color: green }
 .downvote_button { color: red }
+button { 
+	box-shadow: 0px 1px 0px 0px /*rgb(154, 204, 133)*/ inset; 
+	/*background: rgb(116, 173, 90) linear-gradient(to bottom, rgb(116, 173, 90) 5%, rgb(104, 165, 75) 100%) repeat scroll 0% 0%; */
+	border: 1px solid rgb(59, 110, 34); 
+	display: inline-block; 
+	cursor: pointer; 
+	color: rgb(255, 255, 255); 
+	font-family: Arial; 
+	font-size: 13px; 
+	font-weight: bold; 
+	padding: 6px 12px; 
+	text-decoration: none;
+	}
