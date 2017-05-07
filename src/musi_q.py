@@ -15,8 +15,6 @@ class Client:
         self.queue = []
         self.recent = []
         self.recent_users = []
-        self.run = Thread(target=self.__check_loop)
-        self.run.start()
         self.lock = Semaphore()
         self.user_lock = Semaphore()
         if default_playlist:
@@ -25,6 +23,8 @@ class Client:
             self.client.clear()
             self.__mpd_add()
             self.client.play(0)
+        self.run = Thread(target=self.__check_loop)
+        self.run.start()
 
     def __init_queue(self, playlist_name):
         try:
@@ -98,9 +98,9 @@ class Client:
             self.queue.append((song, time(), set()))
             self.lock.release()
             self.vote_song(song, ip_addr, True)
-            self.user_lock.acquire()
+            #self.user_lock.acquire()
             self.recent_users.append((ip_addr, time()))
-            self.user_lock.release()
+            #self.user_lock.release()
             return 'Successfully added the song into the queue'
 
     def vote_song(self, song, ip_addr, vote):
