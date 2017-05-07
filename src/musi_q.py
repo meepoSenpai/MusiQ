@@ -1,5 +1,6 @@
 from mpd import MPDClient, ConnectionError
-from time import time
+from time import time, sleep
+from threading import Thread, Semaphore
 
 class Client:
     '''
@@ -14,15 +15,18 @@ class Client:
         self.queue = []
         self.recent = []
         self.recent_users = []
+        self.run = Thread(target=self.__check_loop)
+        self.run.start()
+        self.lock = Semaphore()
+        self.user_lock = Semaphore()
         if default_playlist:
-            self.__init_query(default_playlist)
+            self.__init_queue(default_playlist)
         if self.client.status()['state'] != 'play' and self.queue != []:
             self.client.clear()
             self.__mpd_add()
-            self.__mpd_add()
             self.client.play(0)
 
-    def __init_query(self, playlist_name):
+    def __init_queue(self, playlist_name):
         try:
             init = self.client.listplaylistinfo(playlist_name)
             for elem in init:
@@ -66,6 +70,15 @@ class Client:
     def __sort_rankings(self):
         self.queue.sort(key=song_key)
 
+    def __check_loop(self):
+        while True:
+            if self.client.status()['state'] != 'play' and len(self.queue) > 0:
+                self.client.clear()
+                self.__mpd_add()
+                self.client.play(0)
+            sleep(1)
+
+
     def add_song(self, song, ip_addr):
         '''
         This method takes a song-filehandle and an IP (or any other string)
@@ -81,9 +94,13 @@ class Client:
             self.vote_song(song, ip_addr, True)
             return 'The song is already in the queue. It has been upvoted if you haven\'t voted for it yet'
         else:
+            self.lock.acquire()
             self.queue.append((song, time(), set()))
+            self.lock.release()
             self.vote_song(song, ip_addr, True)
+            self.user_lock.acquire()
             self.recent_users.append((ip_addr, time()))
+            self.user_lock.release()
             return 'Successfully added the song into the queue'
 
     def vote_song(self, song, ip_addr, vote):
@@ -100,13 +117,17 @@ class Client:
             return False
         if (ip_addr, 1) in to_vote[2] or (ip_addr, -1) in to_vote[2]:
             return False
+        self.lock.acquire()
         to_vote[2].add((ip_addr, vote))
         self.__sort_rankings()
+        self.lock.release()
         return True
 
     def __mpd_add(self):
         self.__sort_rankings()
+        self.lock.acquire()
         song = self.queue.pop()[0]
+        self.lock.release()
         try:
             self.client.add(song['file'])
         except ConnectionError:
@@ -115,8 +136,10 @@ class Client:
         self.recent.append((song, time()))
 
     def __pop_recent(self):
+        self.user_lock.acquire()
         self.recent = [x for x in self.recent if time() - x[1] > 600]
         self.recent_users = [x for x in self.recent_users if time() - x[1] > 900]
+        self.user_lock.release()
 
 def song_key(song):
     return (calculate_karma(song), -1 * song[1])
