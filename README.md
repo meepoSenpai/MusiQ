@@ -21,4 +21,8 @@ For now simply run `pip install -r requirements.txt` and run the (currently name
 
 ### Usage
 
-// TODO
+(Start Mopidy)
+```
+export FLASK_APP=/path/to/rest_interface.py
+flask run --host=0.0.0.0
+```
