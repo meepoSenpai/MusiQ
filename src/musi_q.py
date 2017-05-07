@@ -119,9 +119,10 @@ class Client:
         self.recent_users = [x for x in self.recent_users if time() - x[1] > 900]
 
 def song_key(song):
-    song_set = song[2]
-    karma = 0
-    for elem in song_set:
-        karma = karma + elem[1]
-    return (karma, -1 * song[1])
+    return (calculate_karma(song), -1 * song[1])
 
+def calculate_karma(song):
+    karma = 0
+    for elem in song[2]:
+        karma = karma + elem[1]
+    return karma
