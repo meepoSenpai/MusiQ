@@ -30,11 +30,7 @@ class Client:
         try:
             init = self.client.listplaylistinfo(playlist_name)
             for elem in init:
-                try:
-                    song = self.client.find('title', elem['title'])[0]
-                    self.add_song(song, 'admin')
-                except IndexError:
-                    continue
+                self.add_song(elem, 'admin')
         except ConnectionError:
             self.client.connect('localhost', port=6600)
             self.client.clear()
