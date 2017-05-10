@@ -3,7 +3,7 @@ from musi_q import Client, calculate_karma
 
 app = Flask(__name__)
 
-CLIENT = Client(host="192.168.178.48",default_playlist="Dank Musics")
+CLIENT = Client(host="192.168.178.48", default_playlist="Dank Musics")
 
 # url_for('static', filename='style.css')
 
