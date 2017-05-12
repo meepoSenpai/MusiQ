@@ -72,7 +72,7 @@ class Client:
                 self.client.clear()
                 self.__mpd_add()
                 self.client.play(0)
-            sleep(1)
+            sleep(0.01)
 
 
     def add_song(self, song, ip_addr):
@@ -123,6 +123,7 @@ class Client:
         self.__sort_rankings()
         self.lock.acquire()
         song = self.queue.pop()[0]
+        self.queue = [x for x in self.queue if calculate_karma(x) > -5]
         self.lock.release()
         try:
             self.client.add(song['file'])
