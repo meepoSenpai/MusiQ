@@ -1,4 +1,5 @@
-function button_vote(obj, song_id, weight) {
+function button_vote(obj, song, weight) {
+    song_id = song[0].get('file');
     console.log("Called vote with " + song_id + " and " + weight);
     if (weight != 1 && weight != -1) {
         console.log("Weight does not seem to be right ...");
@@ -16,7 +17,7 @@ function button_vote(obj, song_id, weight) {
                 if (weight == -1) { obj.style.backgroundColor = "OrangeRed"; };
                 var karma_element = document.getElementById('karma_' + song_id);
 
-                $.get( "/getKarma", {song_id: song_id} , function( data ) {
+                $.get( "/getKarma", {song: song} , function( data ) {
                     karma_element.innerHTML = data
                 });
             }
