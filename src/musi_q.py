@@ -94,9 +94,9 @@ class Client:
             self.queue.append((song, time(), set()))
             self.lock.release()
             self.vote_song(song, ip_addr, True)
-            #self.user_lock.acquire()
+            self.user_lock.acquire()
             self.recent_users.append((ip_addr, time()))
-            #self.user_lock.release()
+            self.user_lock.release()
             return 'Successfully added the song into the queue'
 
     def vote_song(self, song, ip_addr, vote):
@@ -123,6 +123,7 @@ class Client:
         self.__sort_rankings()
         self.lock.acquire()
         song = self.queue.pop()[0]
+        self.recent.append((song, time()))
         self.queue = [x for x in self.queue if calculate_karma(x) > -5]
         self.lock.release()
         try:
