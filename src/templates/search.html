@@ -1,16 +1,12 @@
 {% extends 'base.html' %}
-{%block body %}
+{% block search %}
 
-<form>
-    Title <br>
-    <input type="text" name="title">
-    <br>
-    Artist <br>
-    <input type="text" name="artist" >
-    <br>
-    Album <br>
-    <input type="text" name="album" >
-    <br>
+<form action="/search">
+    Search for ... 
+    <input type="text" name="title" placeholder="Title">
+    <input type="text" name="artist" placeholder="Artist">
+    <input type="text" name="album" placeholder="Album">
+    <input type="submit" name="Submit">
 </form>
 
 {% endblock %}

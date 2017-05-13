@@ -1,17 +1,14 @@
 from flask import request, Flask, render_template
-from musi_q import Client, calculate_karma
+from musi_q import Client, calculate_karma, query_song
 
 app = Flask(__name__)
 
-CLIENT = Client(host="localhost", default_playlist="Dank Musics")
+CLIENT = Client(host="localhost")
 
 # url_for('static', filename='style.css')
 
 # def vote_song(song_id, ip_addr, weight):
 #     return CLIENT.vote_song(song_id, ip_addr, int(weight))
-
-def search_song(term):
-    return term
 
 def get_song_list():
     # Magic begins here
@@ -38,10 +35,15 @@ def vote():
             request.environ['REMOTE_ADDR'], 
             int(request.form['weight'])))
 
-@app.route('/search')
+@app.route('/search', methods=['POST'])
 def search():
-    searchterm = request.args.get('term', '')
-    return search_song(searchterm)
+    title = request.form["title"]
+    artist = request.form["artist"]
+    album = request.form["album"]
+    if title == "" && artist == "" && album == "":
+        return "What am i supposed to do without anything"
+    d = {"title": title, "artist": artist, "album": album}
+    return CLIENT.query_song(d)
 
 if __name__ == "__main__":
     app.run()
