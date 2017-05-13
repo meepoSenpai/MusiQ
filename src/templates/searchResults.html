@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block body %}
+
+  <table>
+    <tr>
+      <th>Song</th>
+      <th>Artist</th>
+      <th>Points</th>
+      <th></th>
+      <th></th>
+    </tr>
+
+    {% for s in SONGS %}
+        <tr>
+          <td>{{
+          "{}".
+            format(
+              s[0].get('title')
+            )
+          }}</td>
+          <td>{{
+          "{}".
+            format(
+              s[0].get('artist')
+            )
+          }}</td>
+          <td>
+            <div>
+              <form method="POST" class="vote_song" action=/addSong>
+                <input name="song" type=hidden value="{{s[1]}}"/>
+                <button class="upvote_button" type=submit>👍</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+    {% endfor %}
+  </table>
+
+{% endblock %}
