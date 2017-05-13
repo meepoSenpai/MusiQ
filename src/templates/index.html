@@ -1,5 +1,20 @@
 {% extends "base.html" %}
+{% block search %}
+
+<form action="/search" method="post">
+    Search for ... <br>
+    <input type="text" name="title" placeholder="Title">
+    <br>
+    <input type="text" name="artist" placeholder="Artist">
+    <br>
+    <input type="text" name="album" placeholder="Album">
+    <br>
+    <input type="submit" name="Submit">
+</form>
+<br>
+{% endblock %}
 {% block body %}
+Current Queue: <br>
 {% if SONGS %}
   <table>
     <tr>
@@ -16,19 +31,19 @@
           "{}".
             format(
               s[0].get('title')[:30]
-            ) 
+            )
           }}</td>
           <td>{{
           "{}".
             format(
               s[0].get('artist')[:30]
-            ) 
+            )
           }}</td>
           <td id="karma_{{ s[0].get('file') }}">{{
           "{}".
             format(
               F_KARMA(s)
-            ) 
+            )
           }}</td>
           <td>
             <div>

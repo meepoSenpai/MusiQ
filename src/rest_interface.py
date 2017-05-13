@@ -3,7 +3,7 @@ from musi_q import Client, calculate_karma
 
 app = Flask(__name__)
 
-CLIENT = Client(host="localhost", default_playlist="Chill")
+CLIENT = Client(host="localhost", default_playlist="Dank Musics")
 
 # url_for('static', filename='style.css')
 
@@ -25,7 +25,7 @@ def index():
         if title == "" and artist == "" and album == "":
             return "What am i supposed to do without anything"
         d = {"title": title, "artist": artist, "album": album}
-        return CLIENT.query_song(d)
+        return CLIENT.query_song(**d)
 
     return render_template('index.html',
         ERROR=error,
@@ -53,7 +53,8 @@ def search():
     if title == "" and artist == "" and album == "":
         return "What am i supposed to do without anything"
     d = {"title": title, "artist": artist, "album": album}
-    return CLIENT.query_song(d)
+    print(CLIENT.query_song(**d))
+    return 'Hello'
 
 if __name__ == "__main__":
     app.run()
