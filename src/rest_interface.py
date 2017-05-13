@@ -28,7 +28,8 @@ def index():
 @app.route('/getKarma', methods=['GET'])
 def getKarma():
     song = request.args.get("song", "")
-    return calculate_karma(song)
+    print(song)
+    return CLIENT.get_karma_of_song(song)
 
 @app.route('/vote', methods=['POST'])
 def vote():

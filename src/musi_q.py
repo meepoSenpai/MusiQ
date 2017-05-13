@@ -139,6 +139,11 @@ class Client:
         self.recent_users = [x for x in self.recent_users if time() - x[1] > 900]
         self.user_lock.release()
 
+    def get_karma_of_song(self, song):
+        for elem in self.queue:
+            if song[0] == elem[0]:
+                return calculate_karma(elem)
+
 def song_key(song):
     return (calculate_karma(song), -1 * song[1])
 
