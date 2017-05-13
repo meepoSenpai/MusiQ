@@ -19,11 +19,11 @@ function button_vote(obj, song_id, weight) {
             if (response == "True") {
                 if (weight == 1) { obj.style.backgroundColor = "LightGreen"; };
                 if (weight == -1) { obj.style.backgroundColor = "OrangeRed"; };
-                var karma_element = document.getElementById('karma_' + song_id);
+                // var karma_element = document.getElementById('karma_' + song_id);
 
-                $.get( "/getKarma", {song: song} , function( data ) {
-                    karma_element.innerHTML = data
-                });
+                // $.get( "/getKarma", {song: song} , function( data ) {
+                //     karma_element.innerHTML = data
+                // });
             }
         }
     });
