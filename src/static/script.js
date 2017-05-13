@@ -1,5 +1,9 @@
-function button_vote(obj, song, weight) {
-    song_id = song[0].get('file');
+function button_vote(obj, song_id, weight) {
+    song = jQuery(obj).closest("form").find("input:hidden").val();
+    // console.log(song);
+    // song = song.replace(/'/g, '"');
+    // console.log(song);
+    // song_id = JSON.parse(song);
     console.log("Called vote with " + song_id + " and " + weight);
     if (weight != 1 && weight != -1) {
         console.log("Weight does not seem to be right ...");
@@ -23,5 +27,5 @@ function button_vote(obj, song, weight) {
             }
         }
     });
-    return true;
+    return false;
 };

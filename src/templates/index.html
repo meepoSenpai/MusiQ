@@ -32,15 +32,18 @@
           }}</td>
           <td>
             <div>
-              <form>
-                <input type=hidden value="{{s}}"></form>
-                <button class="upvote_button" type=submit>👍</button>
+              <form class="vote_song" action=#>
+                <input type=hidden value="{{s}}"/>
+                <button onclick="button_vote(this, '{{ s[0].get('file') }}', 1)" class="upvote_button" type=submit>👍</button>
               </form>
             </div>
           </td>
           <td>
             <div>
-              <button onclick="button_vote(this, {{ s }}, -1)" class="downvote_button" type=submit>👎</button>
+              <form class=vote_song action=#>
+                <input type=hidden value="{{s}}"/>
+                <button onclick="button_vote(this, '{{ s[0].get('file') }}', -1)" class="downvote_button" type=submit>👎</button>
+              </form>
             </div>
           </td>
         </tr>

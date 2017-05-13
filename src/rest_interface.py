@@ -3,7 +3,7 @@ from musi_q import Client, calculate_karma
 
 app = Flask(__name__)
 
-CLIENT = Client(host="192.168.0.15", default_playlist="Dank Musics")
+CLIENT = Client(host="localhost", default_playlist="Dank Musics")
 
 # url_for('static', filename='style.css')
 
@@ -27,10 +27,8 @@ def index():
 
 @app.route('/getKarma', methods=['GET'])
 def getKarma():
-    song_id = request.args.get("song", "")
-    print(song_id)
-    # return "5"
-    return calculate_karma(song_id)
+    song = request.args.get("song", "")
+    return calculate_karma(song)
 
 @app.route('/vote', methods=['POST'])
 def vote():
